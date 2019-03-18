@@ -124,7 +124,8 @@ action|wrench|netid|
 ** The example might wrong **
 
 add_achieve_button
-
+example :
+ - add_achieve|tittle |description text|left|achievement icon id|
 
 add_button
 example : 
@@ -132,6 +133,8 @@ example :
 
 
 add_button_with_icon
+ 
+ 
  
  
 add_checkbox
@@ -152,6 +155,9 @@ example :
 
 add_fish_info
 
+
+
+
 add_image_button
 example :
  - add_image_button|banner|interface/large/news_banner.rttex|noflags|||
@@ -161,7 +167,7 @@ add_item
 
 add_item_picker
 example : 
- - add_item_picker|item picker name|button text|
+ - add_item_picker|item picker name|button text|title text|
 
 
 add_label
@@ -186,24 +192,37 @@ example:
 
 add_player_picker
 example:
-- add_player_picker|netid|button_name|
+- add_player_picker|player_picker name |button_name|
 
 
 add_quick_exit
- - no example
+ - none
  
 add_slot
 
+
+
+
 add_small_font_button
 
+
+
+ 
 add_smalltext
-
+example: 
+ - add_smalltext|text|left|
+ 
+ 
 add_smalltext_forced
-
+example:
+ - add_smalltext_forced| text |left|
+ 
+ 
 add_smalltext_forced_alpha
-
-add_smalltext|
-
+example:
+ - add_smalltext_forced_alpha| text | size |left|
+ 
+ 
 add_spacer|
 example :
  - add_spacer|big|
@@ -211,7 +230,10 @@ example :
 
 
 add_tab_button|
-
+example :
+ - 
+ 
+ 
 add_text_input|
 example :
  - add_text_input|text_input name|text_input text | default input text|max text length|
@@ -234,6 +256,6 @@ example :
 
 end_dialog|
 example : 
- - end_dialog|button name|Cancel|OK|
+ - end_dialog|dialog name|Cancel|OK|
  
- 
+  
