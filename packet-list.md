@@ -252,7 +252,7 @@ example :
 add_url_button|
 example : 
  - add_url_button| url button text| link www.google.com |message box| 
-
+ - add_url_button||button text|NOFLAGS|OPENWORLD|world name|
 
 end_dialog|
 example : 
