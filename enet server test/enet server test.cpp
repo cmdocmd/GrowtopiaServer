@@ -114,6 +114,11 @@ bool verifyPassword(string password, string hash) {
 	return !ret;
 }
 
+bool has_only_digits(const string str)
+{
+    return str.find_first_not_of("0123456789") == std::string::npos;
+}
+
 string hashPassword(string password) {
 	char salt[BCRYPT_HASHSIZE];
 	char hash[BCRYPT_HASHSIZE];
