@@ -1014,6 +1014,7 @@ enum ClothTypes {
 	HAND,
 	BACK,
 	MASK,
+	ARTIFACT,
 	NECKLACE,
 	NONE
 };
@@ -1026,6 +1027,7 @@ enum BlockTypes {
 	PAIN_BLOCK,
 	BEDROCK,
 	MAIN_DOOR,
+	CHECKPOINT,
 	SIGN,
 	DOOR,
 	CLOTHING,
@@ -1132,6 +1134,9 @@ void buildItemsDatabase()
 			else if (bt == "Background_Block") {
 				def.blockType = BlockTypes::BACKGROUND;
 			}
+			else if (bt == "Checkpoint") {
+				def.blockType = BlockTypes::CHECKPOINT;
+			}
 			else if (bt == "Sheet_Music") {
 				def.blockType = BlockTypes::BACKGROUND;
 			}
@@ -1166,6 +1171,9 @@ void buildItemsDatabase()
 			}
 			else if (cl == "Back") {
 				def.clothType = ClothTypes::BACK;
+			}
+			else if (cl == "Artifact") {
+				def.clothType = ClothTypes::ARTIFACT;
 			}
 			else if (cl == "Hair") {
 				def.clothType = ClothTypes::MASK;
@@ -1203,6 +1211,9 @@ void buildItemsDatabase()
 			}
 			else if (cl.find("Hair") != string::npos) {
 				def.clothType = ClothTypes::MASK;
+			}
+			else if (cl == "Artifact") {
+				def.clothType = ClothTypes::ARTIFACT;
 			}
 			else if (cl.find("Chest") != string::npos) {
 				def.clothType = ClothTypes::NECKLACE;
