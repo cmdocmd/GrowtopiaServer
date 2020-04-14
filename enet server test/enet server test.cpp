@@ -2879,6 +2879,26 @@ label|Download Latest Version
 						((PlayerInfo*)(peer->data))->cloth_necklace = 0;
 						sendClothes(peer);
 					}
+					else if (str == "/wizard")
+					{
+						((PlayerInfo*)(peer->data))->cloth_hair = 0;
+						((PlayerInfo*)(peer->data))->cloth_shirt = 0;
+						((PlayerInfo*)(peer->data))->cloth_pants = 0;
+						((PlayerInfo*)(peer->data))->cloth_feet = 0;
+						((PlayerInfo*)(peer->data))->cloth_face = 1790;
+						((PlayerInfo*)(peer->data))->cloth_hand = 0;
+						((PlayerInfo*)(peer->data))->cloth_back = 0;
+						((PlayerInfo*)(peer->data))->cloth_mask = 0;
+						((PlayerInfo*)(peer->data))->cloth_necklace = 0;
+						((PlayerInfo*)(peer->data))->skinColor = 2;
+						sendClothes(peer);
+						GamePacket p = packetEnd(appendString(appendString(createPacket(), "OnConsoleMessage"), "`^Legendary Wizard Set Mod has been Enabled! "));
+							ENetPacket* packet = enet_packet_create(p.data,
+								p.len,
+								ENET_PACKET_FLAG_RELIABLE);
+							enet_peer_send(peer, 0, packet);
+							delete p.data;
+					}
 					else if (str.substr(0, 6) == "/find ")
 					{
 						ItemDefinition def;
@@ -3007,7 +3027,7 @@ label|Download Latest Version
 						}
 					}
 					else if (str == "/help"){
-						GamePacket p = packetEnd(appendString(appendString(createPacket(), "OnConsoleMessage"), "Supported commands are: /mods, /ducttape, /help, /mod, /unmod, /inventory, /item id, /team id, /color number, /who, /state number, /count, /sb message, /alt, /radio, /gem, /jsb, /find itemname, /unequip, /weather id, /nick nickname, /flag id"));
+						GamePacket p = packetEnd(appendString(appendString(createPacket(), "OnConsoleMessage"), "Supported commands are: /mods, /ducttape, /help, /mod, /unmod, /inventory, /item id, /team id, /color number, /who, /state number, /count, /sb message, /alt, /radio, /gem, /jsb, /find itemname, /unequip, /weather id, /nick nickname, /flag id, /wizard"));
 						ENetPacket * packet = enet_packet_create(p.data,
 							p.len,
 							ENET_PACKET_FLAG_RELIABLE);
