@@ -1592,7 +1592,7 @@ void SendPacketRaw(int a1, void *packetData, size_t packetDataSize, void *a4, EN
 		SendPacketRaw(4, packPlayerMoving(&data), 56, 0, peer, ENET_PACKET_FLAG_RELIABLE);
 	}
 
-void sendnews() {
+void loadnews() {
 	std::ifstream ifs("news.txt");
 	std::string content((std::istreambuf_iterator<char>(ifs)),
 		(std::istreambuf_iterator<char>()));
@@ -2479,7 +2479,7 @@ label|Download Latest Version
 	cout << "Building items database..." << endl;
 	buildItemsDatabase();
 	cout << "Database is built!" << endl;
-	sendnews();
+	loadnews();
 
 	ENetEvent event;
 	/* Wait up to 1000 milliseconds for an event. */
