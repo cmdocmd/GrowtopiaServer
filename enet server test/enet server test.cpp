@@ -499,6 +499,8 @@ struct PlayerInfo {
 	bool isUpdating = false;
 	bool joinClothesUpdated = false;
 	
+	bool hasLogon = false;
+	
 	bool taped = false;
 
 	int cloth_hair = 0; // 0
@@ -693,6 +695,7 @@ int PlayerDB::playerLogin(ENetPeer* peer, string username, string password) {
 		ifs >> j;
 		string pss = j["password"];
 		if (verifyPassword(password, pss)) {
+			((PlayerInfo*)(peer->data))->hasLogon = true;
 			ENetPeer * currentPeer;
 
 			for (currentPeer = server->peers;
@@ -3632,6 +3635,7 @@ label|Download Latest Version
 					}
 					if (!((PlayerInfo*)(event.peer->data))->haveGrowId)
 					{
+						((PlayerInfo*)(event.peer->data))->hasLogon = true;
 						((PlayerInfo*)(event.peer->data))->rawName = "";
 						((PlayerInfo*)(event.peer->data))->displayName = "Fake " + PlayerDB::fixColors(((PlayerInfo*)(event.peer->data))->requestedName.substr(0, ((PlayerInfo*)(event.peer->data))->requestedName.length()>15?15:((PlayerInfo*)(event.peer->data))->requestedName.length()));
 					}
@@ -3780,6 +3784,7 @@ label|Download Latest Version
 				std::stringstream ss(GetTextPointerFromPacket(event.packet));
 				std::string to;
 				bool isJoinReq = false;
+								
 				while (std::getline(ss, to, '\n')) {
 					string id = to.substr(0, to.find("|"));
 					string act = to.substr(to.find("|") + 1, to.length() - to.find("|") - 1);
@@ -3788,6 +3793,7 @@ label|Download Latest Version
 #ifdef TOTAL_LOG
 						cout << "Entering some world..." << endl;
 #endif
+						if (!((PlayerInfo*)(peer->data))->hasLogon) break;
 						try {
 							if (act.length() > 30) {
 								sendConsoleMsg(peer, "`4Sorry, but world names with more than 30 characters are not allowed!");
