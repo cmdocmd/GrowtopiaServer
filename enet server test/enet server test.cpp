@@ -114,6 +114,11 @@ bool verifyPassword(string password, string hash) {
 	return !ret;
 }
 
+bool has_only_digits(const string str)
+{
+    return str.find_first_not_of("0123456789") == std::string::npos;
+}
+
 string hashPassword(string password) {
 	char salt[BCRYPT_HASHSIZE];
 	char hash[BCRYPT_HASHSIZE];
@@ -2585,6 +2590,37 @@ label|Download Latest Version
 						}
 
 					}
+				}
+				if (cch.find("action|setSkin") == 0) {
+					if (!world) continue;
+					std::stringstream ss(cch);
+					std::string to;
+					int id = -1;
+					string color;
+					while (std::getline(ss, to, '\n')) {
+						vector<string> infoDat = explode("|", to);
+						if (infoDat[0] == "color") color = infoDat[1];
+						if (has_only_digits(color) == false) continue;
+						id = atoi(color.c_str());
+						if (color == "2190853119") {
+							id = -2104114177;
+						}
+						else if (color == "2527912447") {
+							id = -1767054849;
+						}
+						else if (color == "2864971775") {
+							id = -1429995521;
+						}
+						else if (color == "3033464831") {
+							id = -1261502465;
+						}
+						else if (color == "3370516479") {
+							id = -924450817;
+						}
+
+					}
+					((PlayerInfo*)(peer->data))->skinColor = id;
+					sendClothes(peer);
 				}
 				if (cch.find("action|respawn") == 0)
 				{
