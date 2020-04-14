@@ -1034,6 +1034,7 @@ enum BlockTypes {
 	PAIN_BLOCK,
 	BEDROCK,
 	MAIN_DOOR,
+	CHECKPOINT,
 	SIGN,
 	DOOR,
 	CLOTHING,
@@ -1139,6 +1140,9 @@ void buildItemsDatabase()
 			}
 			else if (bt == "Background_Block") {
 				def.blockType = BlockTypes::BACKGROUND;
+			}
+			else if (bt == "Checkpoint") {
+				def.blockType = BlockTypes::CHECKPOINT;
 			}
 			else if (bt == "Sheet_Music") {
 				def.blockType = BlockTypes::BACKGROUND;
