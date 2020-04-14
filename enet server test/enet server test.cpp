@@ -1577,6 +1577,31 @@ void SendPacketRaw(int a1, void *packetData, size_t packetDataSize, void *a4, EN
 		}
 	}
 
+void sendnews(ENetPeer* peer) {
+	std::ifstream ifs("news.txt");
+	std::string content((std::istreambuf_iterator<char>(ifs)),
+		(std::istreambuf_iterator<char>()));
+
+	string target = "\r";
+	string news = "";
+	int found = -1;
+	do {
+		found = content.find(target, found + 1);
+		if (found != -1) {
+			news = content.substr(0, found) + content.substr(found + target.length());
+		}
+		else {
+			news = content;
+		}
+	} while (found != -1);
+	GamePacket p = packetEnd(appendString(appendString(createPacket(), "OnDialogRequest"), news));
+	ENetPacket * packet = enet_packet_create(p.data,
+		p.len,
+		ENET_PACKET_FLAG_RELIABLE);
+	enet_peer_send(peer, 0, packet);
+	delete p.data;
+}
+
 	void sendNothingHappened(ENetPeer* peer, int x, int y) {
 		PlayerMoving data;
 		data.netID = ((PlayerInfo*)(peer->data))->netID;
@@ -3077,6 +3102,9 @@ label|Download Latest Version
 						enet_peer_send(peer, 0, packet);
 						delete p.data;
 						//enet_host_flush(server);
+					}
+					else if (str == "/news"){
+						sendnews(peer);
 					}
 					else if (str.substr(0, 6) == "/nick ") {
 						string nam1e = "```0" + str.substr(6, cch.length() - 6 - 1);
