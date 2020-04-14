@@ -3078,6 +3078,17 @@ label|Download Latest Version
 						delete p.data;
 						//enet_host_flush(server);
 					}
+					else if (str == "/news") {
+					std::ifstream ifs("news.txt");
+					std::string content((std::istreambuf_iterator<char>(ifs)),
+						(std::istreambuf_iterator<char>()));
+					GamePacket p = packetEnd(appendString(appendString(createPacket(), "OnDialogRequest"), content));
+					ENetPacket * packet = enet_packet_create(p.data,
+					p.len,
+					ENET_PACKET_FLAG_RELIABLE);
+					enet_peer_send(peer, 0, packet);
+					delete p.data;
+					}
 					else if (str.substr(0, 6) == "/nick ") {
 						string nam1e = "```0" + str.substr(6, cch.length() - 6 - 1);
 						((PlayerInfo*)(event.peer->data))->displayName = str.substr(6, cch.length() - 6 - 1);
