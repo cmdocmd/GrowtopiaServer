@@ -2237,93 +2237,52 @@ void loadnews() {
 		cout << "Entering a world..." << endl;
 #endif
 		((PlayerInfo*)(peer->data))->joinClothesUpdated = false;
-		string asdf = "0400000004A7379237BB2509E8E0EC04F8720B050000000000000000FBBB0000010000007D920100FDFDFDFD04000000040000000000000000000000070000000000"; // 0400000004A7379237BB2509E8E0EC04F8720B050000000000000000FBBB0000010000007D920100FDFDFDFD04000000040000000000000000000000080000000000000000000000000000000000000000000000000000000000000048133A0500000000BEBB0000070000000000
-		string worldName = worldInfo->name;
+		
+		 string worldName = worldInfo->name; 
 		int xSize = worldInfo->width;
 		int ySize = worldInfo->height;
-		int square = xSize*ySize;
+		int square = xSize*ySize; 
 		__int16 nameLen = worldName.length();
-		int payloadLen = asdf.length() / 2;
-		int dataLen = payloadLen + 2 + nameLen + 12 + (square * 8) + 104;
-		int allocMem = payloadLen + 2 + nameLen + 12 + (square * 8) + 104 + 16000;
-		BYTE* data = new BYTE[allocMem];
-		memset(data, 0, allocMem);
-		for (int i = 0; i < asdf.length(); i += 2)
-		{
-			char x = ch2n(asdf[i]);
-			x = x << 4;
-			x += ch2n(asdf[i + 1]);
-			memcpy(data + (i / 2), &x, 1);
-		}
-		int zero = 0;
-		__int16 item = 0;
-		int smth = 0;
-		for (int i = 0; i < square * 8; i += 4) memcpy(data + payloadLen + i + 14 + nameLen, &zero, 4);
-		for (int i = 0; i < square * 8; i += 8) memcpy(data + payloadLen + i + 14 + nameLen, &item, 2);
-		memcpy(data + payloadLen, &nameLen, 2);
-		memcpy(data + payloadLen + 2, worldName.c_str(), nameLen);
-		memcpy(data + payloadLen + 2 + nameLen, &xSize, 4);
-		memcpy(data + payloadLen + 6 + nameLen, &ySize, 4);
-		memcpy(data + payloadLen + 10 + nameLen, &square, 4);
-		BYTE* blockPtr = data + payloadLen + 14 + nameLen;
+		
+		int alloc = (8 * square);
+	        int total = 78 + namelen + square + 24 + alloc     ;
+		
+		BYTE* data = new BYTE[total];
+		int s1 = 4,s3 = 8,zero = 0;  
+		 
+		 memset(data, 0, total);
+
+		 memcpy(data, &s1, 1);
+		 memcpy(data + 4, &s1, 1);
+		 memcpy(data + 16, &s3, 1);  
+		 memcpy(data + 66, &namelen, 1);
+		 memcpy(data + 68, worldName.c_str(), namelen);
+		 memcpy(data + 68 + namelen, &xSize, 1);
+		 memcpy(data + 72 + namelen, &ySize, 1);
+		 memcpy(data + 76 + namelen, &square, 2);
+		 BYTE* blc = data + 80 + namelen;
 		for (int i = 0; i < square; i++) {
-			if ((worldInfo->items[i].foreground == 0) || (worldInfo->items[i].foreground == 2) || (worldInfo->items[i].foreground == 8) || (worldInfo->items[i].foreground == 100)/* || (worldInfo->items[i].foreground%2)*/)
-			{
-				memcpy(blockPtr, &worldInfo->items[i].foreground, 2);
-				int type = 0x00000000;
-				// type 1 = locked
-				if (worldInfo->items[i].water)
-					type |= 0x04000000;
-				if (worldInfo->items[i].glue)
-					type |= 0x08000000;
-				if (worldInfo->items[i].fire)
-					type |= 0x10000000;
-				if (worldInfo->items[i].red)
-					type |= 0x20000000;
-				if (worldInfo->items[i].green)
-					type |= 0x40000000;
-				if (worldInfo->items[i].blue)
-					type |= 0x80000000;
-
-				// int type = 0x04000000; = water
-				// int type = 0x08000000 = glue
-				// int type = 0x10000000; = fire
-				// int type = 0x20000000; = red color
-				// int type = 0x40000000; = green color
-				// int type = 0x80000000; = blue color
-				memcpy(blockPtr + 4, &type, 4);
-				/*if (worldInfo->items[i].foreground % 2)
-				{
-					blockPtr += 6;
-				}*/
-			}
-			else
-			{
-				memcpy(blockPtr, &zero, 2);
-			}
-			memcpy(blockPtr + 2, &worldInfo->items[i].background, 2);
-			blockPtr += 8;
-			/*if (blockPtr - data < allocMem - 2000) // realloc
-			{
-				int wLen = blockPtr - data;
-				BYTE* oldData = data;
-
-				data = new BYTE[allocMem + 16000];
-				memcpy(data, oldData, allocMem);
-				allocMem += 16000;
-				delete oldData;
-				blockPtr = data + wLen;
+		 if (getItemDef(world->items[i].foreground).blockType == BlockTypes::FOREGROUND){
+				memcpy(blc, &worldInfo->items[i].foreground, 2);
 				
-			}*/
+		 }else{
+			 // gt will crash if block type no in the world packet
+				memcpy(blc, &zero, 2);
+		 }
+			
+			memcpy(blc + 2, &worldInfo->items[i].background, 2);
+			blc += 8;
 		}
-		memcpy(data + dataLen - 4, &smth, 4);
-		ENetPacket * packet2 = enet_packet_create(data,
-			dataLen,
-			ENET_PACKET_FLAG_RELIABLE);
-		enet_peer_send(peer, 0, packet2);
-		//enet_host_flush(server);
+		
+		//int totalitemdrop = worldInfo->dropobject.size();
+	        //memcpy(blc, &totalitemdrop, 2);
+		
+		ENetPacket* packetw = enet_packet_create(data, total, ENET_PACKET_FLAG_RELIABLE);
+	        enet_peer_send(p, 0, packetw);
+		
+		
 		for (int i = 0; i < square; i++) {
-			if ((worldInfo->items[i].foreground == 0) || (worldInfo->items[i].foreground == 2) || (worldInfo->items[i].foreground == 8) || (worldInfo->items[i].foreground == 100))
+			if (getItemDef(world->items[i].foreground).blockType == BlockTypes::FOREGROUND)
 				; // nothing
 			else
 			{
