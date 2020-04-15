@@ -1040,7 +1040,6 @@ enum BlockTypes {
 	CLOTHING,
 	FIST,
 	CONSUMMABLE,
-	Wrenchable,
 	CHECKPOINT,
 	GATEWAY,
 	LOCK,
@@ -2271,6 +2270,28 @@ void loadnews() {
 		 }
 			
 			memcpy(blc + 2, &worldInfo->items[i].background, 2);
+			int type = 0x00000000;
+			// type 1 = locked
+			if (worldInfo->items[i].water)
+				type |= 0x04000000;
+			if (worldInfo->items[i].glue)
+				type |= 0x08000000;
+			if (worldInfo->items[i].fire)
+				type |= 0x10000000;
+			if (worldInfo->items[i].red)
+				type |= 0x20000000;
+			if (worldInfo->items[i].green)
+				type |= 0x40000000;
+			if (worldInfo->items[i].blue)
+				type |= 0x80000000;
+
+			// int type = 0x04000000; = water
+			// int type = 0x08000000 = glue
+			// int type = 0x10000000; = fire
+			// int type = 0x20000000; = red color
+			// int type = 0x40000000; = green color
+			// int type = 0x80000000; = blue color
+			memcpy(blockPtr + 4, &type, 4);
 			blc += 8;
 		}
 		
@@ -4229,6 +4250,7 @@ label|Download Latest Version
 						}
 						if (data2->packetType == 7)
 						{
+							if(data2->punchX < world->width && data2->punchY < world->height)
 							if (getItemDef(world->items[data2->punchX + (data2->punchY * world->width)].foreground).blockType == BlockTypes::MAIN_DOOR) {
 									sendPlayerLeave(peer, (PlayerInfo*)(event.peer->data));
 									((PlayerInfo*)(peer->data))->currentWorld = "EXIT";
