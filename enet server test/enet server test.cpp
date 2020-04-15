@@ -2262,7 +2262,7 @@ void loadnews() {
 		 memcpy(data + 76 + namelen, &square, 2);
 		 BYTE* blc = data + 80 + namelen;
 		for (int i = 0; i < square; i++) {
-		 if (getItemDef(world->items[i].foreground).blockType == BlockTypes::FOREGROUND){
+		 if (getItemDef(worldInfo->items[i].foreground).blockType == BlockTypes::FOREGROUND){
 				memcpy(blc, &worldInfo->items[i].foreground, 2);
 				
 		 }else{
@@ -2282,7 +2282,7 @@ void loadnews() {
 		
 		
 		for (int i = 0; i < square; i++) {
-			if (getItemDef(world->items[i].foreground).blockType == BlockTypes::FOREGROUND)
+			if (getItemDef(worldInfo->items[i].foreground).blockType == BlockTypes::FOREGROUND)
 				; // nothing
 			else
 			{
