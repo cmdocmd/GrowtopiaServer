@@ -1848,7 +1848,7 @@ void loadnews() {
 		if (getItemDef(tile).blockType == BlockTypes::CONSUMMABLE) return;
 
 		if (world == NULL) return;
-		if (x<0 || y<0 || x>world->width - 1 || y>world->height - 1) return; // needs - 1
+		if (x<0 || y<0 || x>world->width - 1 || y>world->height - 1||tile > itemDefs.size()) return; // needs - 1
 		sendNothingHappened(peer,x,y);
 		if (!isSuperAdmin(((PlayerInfo*)(peer->data))->rawName, ((PlayerInfo*)(peer->data))->tankIDPass))
 		{
@@ -1998,6 +1998,7 @@ void loadnews() {
 				world->items[x + (y*world->width)].background = tile;
 			}
 			else {
+				if (world->items[x + (y * world->width)].foreground != 0)return;
 				world->items[x + (y*world->width)].foreground = tile;
 				if (tile == 242) {
 					world->owner = ((PlayerInfo*)(peer->data))->rawName;
