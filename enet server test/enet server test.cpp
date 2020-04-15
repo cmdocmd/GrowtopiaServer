@@ -2291,7 +2291,7 @@ void loadnews() {
 			// int type = 0x20000000; = red color
 			// int type = 0x40000000; = green color
 			// int type = 0x80000000; = blue color
-			memcpy(blockPtr + 4, &type, 4);
+			memcpy(blc + 4, &type, 4);
 			blc += 8;
 		}
 		
