@@ -2278,7 +2278,7 @@ void loadnews() {
 	        //memcpy(blc, &totalitemdrop, 2);
 		
 		ENetPacket* packetw = enet_packet_create(data, total, ENET_PACKET_FLAG_RELIABLE);
-	        enet_peer_send(p, 0, packetw);
+	        enet_peer_send(peer, 0, packetw);
 		
 		
 		for (int i = 0; i < square; i++) {
