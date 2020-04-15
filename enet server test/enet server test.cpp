@@ -1260,7 +1260,7 @@ void buildItemsDatabase()
 		memPos += 1;
 		tile.collisionType = data[memPos];
 		memPos += 1;
-		tile.breakHits = data[memPos];
+		tile.breakHits = data[memPos] / 6;
 		memPos += 1;
 		memcpy(&tile.dropChance, data + memPos, 4);
 		memPos += 4;
@@ -2270,13 +2270,9 @@ void loadnews() {
 		 memcpy(data + 76 + namelen, &square, 2);
 		 BYTE* blc = data + 80 + namelen;
 		for (int i = 0; i < square; i++) {
-		 if (getItemDef(worldInfo->items[i].foreground).blockType == BlockTypes::FOREGROUND){
-				memcpy(blc, &worldInfo->items[i].foreground, 2);
-				
-		 }else{
-			 // gt will crash if block type no in the world packet
-				memcpy(blc, &zero, 2);
-		 }
+			//removed cus some of blocks require tile extra and it will crash the world without
+			memcpy(blc, &worldInfo->items[i].foreground, 2);
+			memcpy(blc, &zero, 2);
 			
 			memcpy(blc + 2, &worldInfo->items[i].background, 2);
 			int type = 0x00000000;
@@ -2312,10 +2308,6 @@ void loadnews() {
 		
 		
 		for (int i = 0; i < square; i++) {
-			if (getItemDef(worldInfo->items[i].foreground).blockType == BlockTypes::FOREGROUND)
-				; // nothing
-			else
-			{
 				PlayerMoving data;
 				//data.packetType = 0x14;
 				data.packetType = 0x3;
@@ -2331,7 +2323,6 @@ void loadnews() {
 				data.netID = -1;
 				data.plantingTree = worldInfo->items[i].foreground;
 				SendPacketRaw(4, packPlayerMoving(&data), 56, 0, peer, ENET_PACKET_FLAG_RELIABLE);
-			}
 		}
 		((PlayerInfo*)(peer->data))->currentWorld = worldInfo->name;
 		if (worldInfo->owner != "") {
