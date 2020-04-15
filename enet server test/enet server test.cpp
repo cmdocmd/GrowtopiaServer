@@ -1845,7 +1845,7 @@ void loadnews() {
 		
 		WorldInfo *world = getPlyersWorld(peer);
 
-		if (getItemDef(tile).blockType == BlockTypes::CONSUMABLE) return;
+		if (getItemDef(tile).blockType == BlockTypes::CONSUMMABLE) return;
 
 		if (world == NULL) return;
 		if (x<0 || y<0 || x>world->width - 1 || y>world->height - 1) return; // needs - 1
