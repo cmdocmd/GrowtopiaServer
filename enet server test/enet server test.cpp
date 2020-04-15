@@ -2242,7 +2242,7 @@ void loadnews() {
 		int xSize = worldInfo->width;
 		int ySize = worldInfo->height;
 		int square = xSize*ySize; 
-		__int16 nameLen = worldName.length();
+		__int16 namelen = worldName.length();
 		
 		int alloc = (8 * square);
 	        int total = 78 + namelen + square + 24 + alloc     ;
