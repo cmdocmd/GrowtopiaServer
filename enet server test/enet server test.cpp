@@ -1180,9 +1180,66 @@ void craftItemDescriptions() {
 	}
 }
 
+std::ifstream::pos_type filesize(const char* filename)
+{
+	std::ifstream in(filename, std::ifstream::ate | std::ifstream::binary);
+	return in.tellg();
+}
+
+uint32_t HashString(unsigned char* str, int len)
+{
+	if (!str) return 0;
+
+	unsigned char* n = (unsigned char*)str;
+	uint32_t acc = 0x55555555;
+
+	if (len == 0)
+	{
+		while (*n)
+			acc = (acc >> 27) + (acc << 5) + *n++;
+	}
+	else
+	{
+		for (int i = 0; i < len; i++)
+		{
+			acc = (acc >> 27) + (acc << 5) + *n++;
+		}
+	}
+	return acc;
+
+}
+
+unsigned char* getA(string fileName, int* pSizeOut, bool bAddBasePath, bool bAutoDecompress)
+{
+	unsigned char* pData = NULL;
+	FILE* fp = fopen(fileName.c_str(), "rb");
+	if (!fp)
+	{
+		cout << "File not found" << endl;
+		if (!fp) return NULL;
+	}
+
+	fseek(fp, 0, SEEK_END);
+	*pSizeOut = ftell(fp);
+	fseek(fp, 0, SEEK_SET);
+
+	pData = (unsigned char*)new unsigned char[((*pSizeOut) + 1)];
+	if (!pData)
+	{
+		printf("Out of memory opening %s?", fileName.c_str());
+		return 0;
+	}
+	pData[*pSizeOut] = 0;
+	fread(pData, *pSizeOut, 1, fp);
+	fclose(fp);
+
+	return pData;
+}
+
+int itemdathash;
 void buildItemsDatabase()
 {
-	string secret = "PBG892FXX982ABC*"; 
+	string secret = "PBG892FXX982ABC*";
 	std::ifstream file("items.dat", std::ios::binary | std::ios::ate);
 	int size = file.tellg();
 	char* data = new char[size];
@@ -1190,11 +1247,32 @@ void buildItemsDatabase()
 
 	if (file.read((char*)(data), size))
 	{
-		cout << "Loading items.dat " << endl;
+		itemsDat = new BYTE[60 + size];
+		string asdf = "0400000010000000FFFFFFFF000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+		for (int i = 0; i < asdf.length(); i += 2)
+		{
+			char x = ch2n(asdf[i]);
+			x = x << 4;
+			x += ch2n(asdf[i + 1]);
+			memcpy(itemsDat + (i / 2), &x, 1);
+			if (asdf.length() > 60 * 2) throw 0;
+		}
+		memcpy(itemsDat + 56, &size, 4);
+		file.seekg(0, std::ios::beg);
+		if (file.read((char*)(itemsDat + 60), size))
+		{
+			uint8_t* pData;
+			int size = 0;
+			const char filename[] = "items.dat";
+			size = filesize(filename);
+			pData = getA((string)filename, &size, false, false);
+			cout << "Updating items data success! Hash: " << HashString((unsigned char*)pData, size) << endl;
+			itemdathash = HashString((unsigned char*)pData, size);
+			file.close();
+		}
 	}
 	else {
-		cout << "Decoding of items data has failed..." << endl;
-
+		cout << "Updating items data failed!" << endl;
 		exit(0);
 	}
 	int itemCount;
@@ -2455,62 +2533,6 @@ void loadnews() {
 
 	}
 
-std::ifstream::pos_type filesize(const char* filename)
-{
-	std::ifstream in(filename, std::ifstream::ate | std::ifstream::binary);
-	return in.tellg();
-}
-
-uint32_t HashString(unsigned char* str, int len)
-{
-	if (!str) return 0;
-
-	unsigned char* n = (unsigned char*)str;
-	uint32_t acc = 0x55555555;
-
-	if (len == 0)
-	{
-		while (*n)
-			acc = (acc >> 27) + (acc << 5) + *n++;
-	}
-	else
-	{
-		for (int i = 0; i < len; i++)
-		{
-			acc = (acc >> 27) + (acc << 5) + *n++;
-		}
-	}
-	return acc;
-
-}
-
-unsigned char* getA(string fileName, int* pSizeOut, bool bAddBasePath, bool bAutoDecompress)
-{
-	unsigned char* pData = NULL;
-	FILE* fp = fopen(fileName.c_str(), "rb");
-	if (!fp)
-	{
-		cout << "File not found" << endl;
-		if (!fp) return NULL;
-	}
-
-	fseek(fp, 0, SEEK_END);
-	*pSizeOut = ftell(fp);
-	fseek(fp, 0, SEEK_SET);
-
-	pData = (unsigned char*)new unsigned char[((*pSizeOut) + 1)];
-	if (!pData)
-	{
-		printf("Out of memory opening %s?", fileName.c_str());
-		return 0;
-	}
-	pData[*pSizeOut] = 0;
-	fread(pData, *pSizeOut, 1, fp);
-	fclose(fp);
-
-	return pData;
-}
-
 void loadConfig() {
 	/*inside config.json:
 	{
@@ -2586,45 +2608,6 @@ label|Download Latest Version
 	int* p = NULL;
 	*p = 5;*/
 	signal(SIGINT, exitHandler);
-	int itemdathash ;
-	// load items.dat
-	{
-		std::ifstream file("items.dat", std::ios::binary | std::ios::ate);
-		itemsDatSize = file.tellg();
-
-	
-		itemsDat = new BYTE[60 + itemsDatSize];
-		string asdf = "0400000010000000FFFFFFFF000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
-		for (int i = 0; i < asdf.length(); i += 2)
-		{
-			char x = ch2n(asdf[i]);
-			x = x << 4;
-			x += ch2n(asdf[i + 1]);
-			memcpy(itemsDat + (i / 2), &x, 1);
-			if (asdf.length() > 60 * 2) throw 0;
-		}
-		memcpy(itemsDat + 56, &itemsDatSize, 4);
-		file.seekg(0, std::ios::beg);
-
-		if (file.read((char*)(itemsDat + 60), itemsDatSize))
-		{
-			uint8_t* pData;
-			int size = 0;
-			const char filename[] = "items.dat";
-			size = filesize(filename);
-			pData = getA((string)filename, &size, false, false);
-			cout << "Updating items data success! Hash: " << HashString((unsigned char*)pData, size) << endl;
-			itemdathash = HashString((unsigned char*)pData, size);
-			file.close(); 
-
-		}
-		else {
-			cout << "Updating items data failed! ( no items.dat file found!)" << endl;
-		}
-	}
-	
-
-	//world = generateWorld();
 	worldDB.get("TEST");
 	worldDB.get("MAIN");
 	worldDB.get("NEW");
