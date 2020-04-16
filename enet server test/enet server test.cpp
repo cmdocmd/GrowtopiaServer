@@ -2271,7 +2271,6 @@ void loadnews() {
 		 BYTE* blc = data + 80 + namelen;
 		for (int i = 0; i < square; i++) {
 			//removed cus some of blocks require tile extra and it will crash the world without
-			memcpy(blc, &worldInfo->items[i].foreground, 2);
 			memcpy(blc, &zero, 2);
 			
 			memcpy(blc + 2, &worldInfo->items[i].background, 2);
