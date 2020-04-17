@@ -3177,6 +3177,7 @@ label|Download Latest Version
 						packet::dialog(peer, newslist);
 					}
 					else if (str == "/loadnews"){
+						if (!isSuperAdmin(((PlayerInfo*)(peer->data))->rawName, ((PlayerInfo*)(peer->data))->tankIDPass)) break;
 						loadnews();//To load news instead of close server and run it again
 					}
 					else if (str.substr(0, 6) == "/nick ") {
