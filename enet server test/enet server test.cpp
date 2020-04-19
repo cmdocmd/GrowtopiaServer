@@ -3171,10 +3171,14 @@ label|Download Latest Version
 						}
 					}
 					else if (str == "/help"){
-						packet::consolemessage(peer, "Supported commands are: /mods, /ducttape, /help, /mod, /unmod, /inventory, /item id, /team id, /color number, /who, /state number, /count, /sb message, /alt, /radio, /gem, /jsb, /find itemname, /unequip, /weather id, /nick nickname, /flag id, /wizard, /news");
+						packet::consolemessage(peer, "Supported commands are: /mods, /ducttape, /help, /mod, /unmod, /inventory, /item id, /team id, /color number, /who, /state number, /count, /sb message, /alt, /radio, /gem, /jsb, /find itemname, /unequip, /weather id, /nick nickname, /flag id, /wizard, /news, /loadnews");
 					}
 					else if (str == "/news"){
 						packet::dialog(peer, newslist);
+					}
+					else if (str == "/loadnews"){
+						if (!isSuperAdmin(((PlayerInfo*)(peer->data))->rawName, ((PlayerInfo*)(peer->data))->tankIDPass)) break;
+						loadnews();//To load news instead of close server and run it again
 					}
 					else if (str.substr(0, 6) == "/nick ") {
 						string nam1e = "```0" + str.substr(6, cch.length() - 6 - 1);
