@@ -710,7 +710,7 @@ int PlayerDB::playerLogin(ENetPeer* peer, string username, string password) {
 			//after verify password add adminlevel not before
 			bool found = false;
 			for (int i = 0; i < admins.size(); i++) {
-				if (admins[i] == username) {
+				if (admins[i].username == username) {
 				found = true;	
 				}
 			}
