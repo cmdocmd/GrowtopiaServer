@@ -689,14 +689,40 @@ string PlayerDB::fixColors(string text) {
 	return ret;
 }
 
+struct Admin {
+	string username;
+	string password;
+	int level = 0;
+	long long int lastSB = 0;
+};
+
+vector<Admin> admins;
+
 int PlayerDB::playerLogin(ENetPeer* peer, string username, string password) {
 	std::ifstream ifs("players/" + PlayerDB::getProperName(username) + ".json");
 	if (ifs.is_open()) {
 		json j;
 		ifs >> j;
 		string pss = j["password"];
+		int adminLevel = j["adminLevel"];
 		if (verifyPassword(password, pss)) {
 			((PlayerInfo*)(peer->data))->hasLogon = true;
+			//after verify password add adminlevel not before
+			bool found = false;
+			for (int i = 0; i < admins.size(); i++) {
+				if (admins[i] == username) {
+				found = true;	
+				}
+			}
+			if (!found) {//not in vector
+				if (adminLevel != 0) {
+					Admin admin;
+					admin.username = PlayerDB::getProperName(username);
+					admin.password = pss;
+					admin.level = adminLevel;
+					admins.push_back(admin);
+				}
+			}
 			ENetPeer * currentPeer;
 
 			for (currentPeer = server->peers;
@@ -1558,15 +1584,6 @@ void buildItemsDatabase()
 	} 
 	craftItemDescriptions();
 }
-
-struct Admin {
-	string username;
-	string password;
-	int level = 0;
-	long long int lastSB = 0;
-};
-
-vector<Admin> admins;
 
 void addAdmin(string username, string password, int level)
 {
